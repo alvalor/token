@@ -266,6 +266,10 @@ contract PausableToken is StandardToken, Pausable {
 
 contract AlvalorToken is PausableToken {
 
+  string public constant name = "Alvalor";
+  string public constant symbol = "AVL";
+  uint8 public constant decimals = 0;
+
   function AlvalorToken() {
     totalSupply = 18446744073709551615;
     balances[msg.sender] = 18446744073709551615;
