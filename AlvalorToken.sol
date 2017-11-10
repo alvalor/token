@@ -62,11 +62,10 @@ library Math {
  * functions, this simplifies the implementation of "user permissions".
  */
 contract Ownable {
+
   address public owner;
 
-
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
 
   /**
    * @dev The Ownable constructor sets the original `owner` of the contract to the sender
@@ -76,7 +75,6 @@ contract Ownable {
     owner = msg.sender;
   }
 
-
   /**
    * @dev Throws if called by any account other than the owner.
    */
@@ -84,18 +82,6 @@ contract Ownable {
     require(msg.sender == owner);
     _;
   }
-
-
-  /**
-   * @dev Allows the current owner to transfer control of the contract to a newOwner.
-   * @param newOwner The address to transfer ownership to.
-   */
-  function transferOwnership(address newOwner) onlyOwner public {
-    require(newOwner != address(0));
-    OwnershipTransferred(owner, newOwner);
-    owner = newOwner;
-  }
-
 }
 
 
@@ -104,11 +90,11 @@ contract Ownable {
  * @dev Base contract which allows children to implement an emergency stop mechanism.
  */
 contract Pausable is Ownable {
+
   event Pause();
   event Unpause();
 
   bool public paused = false;
-
 
   /**
    * @dev modifier to allow actions only when the contract IS paused
@@ -174,6 +160,7 @@ contract ERC20 is ERC20Basic {
  * @dev Basic version of StandardToken, with no allowances.
  */
 contract BasicToken is ERC20Basic {
+
   using SafeMath for uint256;
 
   mapping(address => uint256) public balances;
@@ -202,7 +189,6 @@ contract BasicToken is ERC20Basic {
   function balanceOf(address _owner) public constant returns (uint256 balance) {
     return balances[_owner];
   }
-
 }
 
 
@@ -216,7 +202,6 @@ contract BasicToken is ERC20Basic {
 contract StandardToken is ERC20, BasicToken {
 
   mapping (address => mapping (address => uint256)) internal allowed;
-
 
   /**
    * @dev Transfer tokens from one address to another
@@ -261,30 +246,6 @@ contract StandardToken is ERC20, BasicToken {
   function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
     return allowed[_owner][_spender];
   }
-
-  /**
-   * approve should be called when allowed[_spender] == 0. To increment
-   * allowed value is better to use this function to avoid 2 calls (and wait until
-   * the first transaction is mined)
-   * From MonolithDAO Token.sol
-   */
-  function increaseApproval (address _spender, uint _addedValue) public returns (bool success) {
-    allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);
-    Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
-    return true;
-  }
-
-  function decreaseApproval (address _spender, uint _subtractedValue) public returns (bool success) {
-    uint oldValue = allowed[msg.sender][_spender];
-    if (_subtractedValue > oldValue) {
-      allowed[msg.sender][_spender] = 0;
-    } else {
-      allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);
-    }
-    Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
-    return true;
-  }
-
 }
 
 
@@ -307,14 +268,6 @@ contract PausableToken is StandardToken, Pausable {
   function approve(address _spender, uint256 _value) public whenNotPaused returns (bool) {
     return super.approve(_spender, _value);
   }
-
-  function increaseApproval(address _spender, uint _addedValue) public whenNotPaused returns (bool success) {
-    return super.increaseApproval(_spender, _addedValue);
-  }
-
-  function decreaseApproval(address _spender, uint _subtractedValue) public whenNotPaused returns (bool success) {
-    return super.decreaseApproval(_spender, _subtractedValue);
-  }
 }
 
 
@@ -329,6 +282,7 @@ contract PausableToken is StandardToken, Pausable {
  **/
 
 contract AlvalorToken is PausableToken {
+
   using SafeMath for uint256;
 
   // the details of the token for wallets
@@ -361,6 +315,11 @@ contract AlvalorToken is PausableToken {
   // from being called after the token supply has been frozen
   modifier whenNotFrozen() {
     require(!frozen);
+    _;
+  }
+
+  modifier whenFrozen() {
+    require(frozen);
     _;
   }
 
@@ -411,7 +370,7 @@ contract AlvalorToken is PausableToken {
 
   // claim will allow any sender to retrieve the airdrop tokens assigned to him
   // it will only work until the maximum number of airdrop tokens are redeemed
-  function claim() whenNotPaused public returns (bool) {
+  function claim() whenNotPaused whenFrozen public returns (bool) {
     require(claimedSupply < dropSupply);
     uint value = Math.min256(_claimable[msg.sender], dropSupply.sub(claimedSupply));
     _claimable[msg.sender] = _claimable[msg.sender].sub(value);
