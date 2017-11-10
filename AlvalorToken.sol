@@ -176,7 +176,7 @@ contract ERC20 is ERC20Basic {
 contract BasicToken is ERC20Basic {
   using SafeMath for uint256;
 
-  mapping(address => uint256) balances;
+  mapping(address => uint256) public balances;
 
   /**
   * @dev transfer token for a specified address
@@ -348,7 +348,7 @@ contract AlvalorToken is PausableToken {
   uint256 public claimedSupply = 0;
 
   // keeps track of how much each address can claim in the airdrop
-  mapping(address => uint256) _claimable;
+  mapping(address => uint256) private _claimable;
 
   // events emmitted by the contract
   event Freeze();
