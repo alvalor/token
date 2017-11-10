@@ -348,7 +348,7 @@ contract AlvalorToken is PausableToken {
   uint256 public claimedSupply = 0;
 
   // keeps track of how much each address can claim in the airdrop
-  mapping(address => uint256) claimable;
+  mapping(address => uint256) _claimable;
 
   // events emmitted by the contract
   event Freeze();
@@ -393,21 +393,28 @@ contract AlvalorToken is PausableToken {
     return true;
   }
 
+  function claimable(address _receiver) constant public returns (uint256) {
+    if (claimedSupply >= dropSupply) {
+      return 0;
+    }
+    return _claimable[_receiver];
+  }
+
   // drop will create a new allowance for claimable tokens of the airdrop
   // it will no longer work once the token supply has been frozen
   function drop(address _receiver, uint256 _value) onlyOwner whenNotFrozen public returns (bool) {
     require(claimedSupply < dropSupply);
-    claimable[_receiver] = _value;
+    _claimable[_receiver] = _value;
     Drop(_receiver, _value);
     return true;
   }
 
   // claim will allow any sender to retrieve the airdrop tokens assigned to him
   // it will only work until the maximum number of airdrop tokens are redeemed
-  function claim() public returns (bool) {
+  function claim() whenNotPaused public returns (bool) {
     require(claimedSupply < dropSupply);
-    uint value = Math.min256(claimable[msg.sender], dropSupply.sub(claimedSupply));
-    claimable[msg.sender] = 0;
+    uint value = Math.min256(_claimable[msg.sender], dropSupply.sub(claimedSupply));
+    _claimable[msg.sender] = _claimable[msg.sender].sub(value);
     claimedSupply = claimedSupply.add(value);
     totalSupply = totalSupply.add(value);
     balances[msg.sender] = balances[msg.sender].add(value);
