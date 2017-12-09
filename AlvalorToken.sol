@@ -6,25 +6,25 @@ pragma solidity ^0.4.15;
  * @dev Math operations with safety checks that throw on error
  */
 library SafeMath {
-  function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+  function mul(uint256 a, uint256 b) public pure returns (uint256) {
     uint256 c = a * b;
     assert(a == 0 || c / a == b);
     return c;
   }
 
-  function div(uint256 a, uint256 b) internal constant returns (uint256) {
+  function div(uint256 a, uint256 b) public pure returns (uint256) {
     // assert(b > 0); // Solidity automatically throws when dividing by 0
     uint256 c = a / b;
     // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return c;
   }
 
-  function sub(uint256 a, uint256 b) internal constant returns (uint256) {
+  function sub(uint256 a, uint256 b) public pure returns (uint256) {
     assert(b <= a);
     return a - b;
   }
 
-  function add(uint256 a, uint256 b) internal constant returns (uint256) {
+  function add(uint256 a, uint256 b) public pure returns (uint256) {
     uint256 c = a + b;
     assert(c >= a);
     return c;
@@ -38,19 +38,19 @@ library SafeMath {
  */
 
 library Math {
-  function max64(uint64 a, uint64 b) internal constant returns (uint64) {
+  function max64(uint64 a, uint64 b) public pure returns (uint64) {
     return a >= b ? a : b;
   }
 
-  function min64(uint64 a, uint64 b) internal constant returns (uint64) {
+  function min64(uint64 a, uint64 b) public pure returns (uint64) {
     return a < b ? a : b;
   }
 
-  function max256(uint256 a, uint256 b) internal constant returns (uint256) {
+  function max256(uint256 a, uint256 b) public pure returns (uint256) {
     return a >= b ? a : b;
   }
 
-  function min256(uint256 a, uint256 b) internal constant returns (uint256) {
+  function min256(uint256 a, uint256 b) public pure returns (uint256) {
     return a < b ? a : b;
   }
 }
@@ -163,7 +163,7 @@ contract BasicToken is ERC20Basic {
 
   using SafeMath for uint256;
 
-  mapping(address => uint256) public balances;
+  mapping(address => uint256) internal balances;
 
   /**
   * @dev transfer token for a specified address
@@ -287,8 +287,8 @@ contract AlvalorToken is PausableToken {
 
   // the details of the token for wallets
   string public constant name = "Alvalor";
-  string public constant symbol = "VAL";
-  uint8 public constant decimals = 0;
+  string public constant symbol = "TVAL";
+  uint8 public constant decimals = 12;
 
   // when frozen, the supply of the token cannot change anymore
   bool public frozen = false;
