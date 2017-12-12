@@ -296,7 +296,7 @@ contract AlvalorToken is PausableToken {
   // defines the maximum total supply and the maximum number of tokens
   // claimable through the airdrop mechanism
   uint256 public constant maxSupply = 18446744073709551615;
-  uint256 public constant dropSupply = 3689348814741910528;
+  uint256 public constant dropSupply = 3689348814741910323;
 
   // keeps track of the total supply already claimed through the airdrop
   uint256 public claimedSupply = 0;
