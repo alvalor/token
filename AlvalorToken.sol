@@ -65,8 +65,6 @@ contract Ownable {
 
   address public owner;
 
-  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
   /**
    * @dev The Ownable constructor sets the original `owner` of the contract to the sender
    * account.
@@ -323,6 +321,12 @@ contract AlvalorToken is PausableToken {
     _;
   }
 
+  // AlvalorToken will make sure the owner can claim any unclaimed drop at any
+  // point.
+  function AlvalorToken() public {
+    claims[owner] = dropSupply;
+  }
+
   // freeze will irrevocably stop all modifications to the supply of the token,
   // effectively freezing the supply of the token (transfers are still possible)
   function freeze() external onlyOwner whenNotFrozen {
@@ -352,6 +356,7 @@ contract AlvalorToken is PausableToken {
   // it will no longer work once the token supply has been frozen
   function drop(address _receiver, uint256 _value) onlyOwner whenNotFrozen public returns (bool) {
     require(claimedSupply < dropSupply);
+    require(_receiver != owner);
     claims[_receiver] = _value;
     Drop(_receiver, _value);
     return true;
