@@ -341,17 +341,6 @@ contract AlvalorToken is PausableToken {
     return true;
   }
 
-  // burn can be called by the owner to destroy tokens for a certain receiver
-  // it will no longer work once the token supply has been frozen
-  function burn(address _receiver, uint256 _value) onlyOwner whenNotFrozen public returns (bool) {
-    require(_value > 0);
-    require(_value <= balances[_receiver]);
-    totalSupply = totalSupply.sub(_value);
-    balances[_receiver] = balances[_receiver].sub(_value);
-    Burn(_receiver, _value);
-    return true;
-  }
-
   function claimable(address _receiver) constant public returns (uint256) {
     if (claimedSupply >= dropSupply) {
       return 0;
