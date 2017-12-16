@@ -307,7 +307,6 @@ contract AlvalorToken is PausableToken {
   event Drop(address indexed receiver, uint256 value);
   event Mint(address indexed receiver, uint256 value);
   event Claim(address indexed receiver, uint256 value);
-  event Burn(address indexed receiver, uint256 value);
 
   // the not frozen modifier guards functions modifying the supply of the token
   // from being called after the token supply has been frozen
