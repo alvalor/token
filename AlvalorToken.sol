@@ -382,6 +382,7 @@ contract AlvalorToken is PausableToken {
   // it will only work until the maximum number of airdrop tokens are redeemed
   function claim() whenNotPaused whenFrozen external returns (bool) {
     require(claimedSupply < dropSupply);
+    require(claims[msg.sender] > 0);
     uint value = claimable(msg.sender);
     claims[msg.sender] = claims[msg.sender].sub(value);
     claimedSupply = claimedSupply.add(value);
